@@ -8,7 +8,7 @@
 
 bool is_vowel(char b) {
 	if (b == 'a' ||b == 'e' ||b  == 'i' ||b == 'o' ||b == 'u'
-			|| b == 'A' || b == 'E' ||b == 'I' || b == 'O' || b =='U') {
+			|| b == 'A' || b == 'E' ||b == 'I' || b == 'O' || b =='U' || b=='\0') {
 	return true;
 	}
 	else {
@@ -19,10 +19,15 @@ bool is_vowel(char b) {
 void disemvowel(FILE* inputFile, FILE* outputFile) {
 //	char * inBuf = (char*) calloc(BUF_SIZE, sizeof(char));
 //	char * outBuf = (char*) calloc(BUF_SIZE, sizeof(char));
-	char inBuf[BUF_SIZE];
-	char outBuf[BUF_SIZE];
+//	char inBuf[BUF_SIZE];
+//	char outBuf[BUF_SIZE];
 	while(!feof(inputFile)){
-		fread(&inBuf, sizeof(inBuf), 1, inputFile);
+//	while(fread(inBuf, sizeof(inBuf), 1, inputFile)==1){
+		char * inBuf = (char*) calloc(BUF_SIZE, sizeof(char));
+
+//		char * outBuf = (char*) calloc(BUF_SIZE, sizeof(char));
+
+		fread(inBuf, sizeof(char), BUF_SIZE, inputFile);
 		int consonant_count = 0;
 		for (int i=0; i<BUF_SIZE; i++){
 			if(!is_vowel(inBuf[i])) {
@@ -30,6 +35,7 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 			}
 		}	
 
+		char * outBuf = (char*) calloc(consonant_count, sizeof(char));
 
 		int j = 0;
 		for(int i=0; i<BUF_SIZE; i++) {
@@ -39,7 +45,10 @@ void disemvowel(FILE* inputFile, FILE* outputFile) {
 			}
 		}
 
-		fwrite(&outBuf, sizeof(outBuf), 1, outputFile);
+		fwrite(outBuf, sizeof(char), consonant_count, outputFile);
+//		printf("\n END OF LOOP \n");
+		free(inBuf);
+		free(outBuf);
 	}
 }
 
