@@ -16,6 +16,20 @@ bool is_dir(const char* path) {
    * return value from stat() in case there is a problem, e.g., maybe the
    * the file doesn't actually exist.
    */
+	//Create a buffer
+	printf("we are at the start of is_dir %s", path);
+	struct stat buf;
+	//Store metadata about the file the path points to
+	if(stat(path, &buf) != 0){
+		return NULL;
+	}
+
+	//Store whether the file is a directory
+	bool isDirectory = S_ISDIR(buf.st_mode);
+
+//	free(&buf);
+
+	return isDirectory;
 }
 
 /* 
@@ -36,13 +50,26 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
+printf("we are in process_directory %s", path);
+	struct dirent *file;
+	chdir(path);
+	DIR* currentDir = opendir(path);
+	while((file=readdir(currentDir))){
+		char* fileName = file->d_name;
+		if(strcmp(fileName, ".") != 0 || strcmp(fileName, "..") != 0){
+	//		process_path(strcat(path, fileName));
+			process_path(fileName);
+		}
+	}
+	closedir(currentDir);
+	chdir("..");
 }
 
 void process_file(const char* path) {
   /*
    * Update the number of regular files.
-   * This is as simple as it seems. :-)
    */
+	num_regular++;
 }
 
 void process_path(const char* path) {
@@ -54,6 +81,7 @@ void process_path(const char* path) {
 }
 
 int main (int argc, char *argv[]) {
+	printf("we are at the start of main %s", argv[1]);
   // Ensure an argument was provided.
   if (argc != 2) {
     printf ("Usage: %s <path>\n", argv[0]);
