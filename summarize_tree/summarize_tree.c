@@ -17,11 +17,11 @@ bool is_dir(const char* path) {
    * the file doesn't actually exist.
    */
 	//Create a buffer
-	printf("we are at the start of is_dir %s", path);
 	struct stat buf;
 	//Store metadata about the file the path points to
 	if(stat(path, &buf) != 0){
-		return NULL;
+		printf("Error checking %s", path);
+		exit(1);
 	}
 
 	//Store whether the file is a directory
@@ -50,14 +50,20 @@ void process_directory(const char* path) {
    * with a matching call to chdir() to move back out of it when you're
    * done.
    */
-printf("we are in process_directory %s", path);
+
+	num_dirs++;
 	struct dirent *file;
-	chdir(path);
-	DIR* currentDir = opendir(path);
+
+	if(chdir(path) != 0){
+		printf("Error processing directory %s", path);
+		exit(1);
+	}
+
+	DIR* currentDir = opendir(".");
+
 	while((file=readdir(currentDir))){
 		char* fileName = file->d_name;
-		if(strcmp(fileName, ".") != 0 || strcmp(fileName, "..") != 0){
-	//		process_path(strcat(path, fileName));
+		if(strcmp(fileName, ".") != 0 && strcmp(fileName, "..") != 0){
 			process_path(fileName);
 		}
 	}
@@ -81,7 +87,6 @@ void process_path(const char* path) {
 }
 
 int main (int argc, char *argv[]) {
-	printf("we are at the start of main %s", argv[1]);
   // Ensure an argument was provided.
   if (argc != 2) {
     printf ("Usage: %s <path>\n", argv[0]);
